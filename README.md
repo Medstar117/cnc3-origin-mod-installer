@@ -7,7 +7,7 @@
  
  I may or may not include other games from the Ultimate Edition since I personally don't use them, and I currently have no knowledge of how to manually install mods to them.
  
- ***DISCLAIMER*** Any copyrighted work within this repository (images, etc.) belong to their original creators/owners, not me. If any issues arise concerning copyrighted material, please either post an issue, or message me directly.
+ ***DISCLAIMER:*** Any copyrighted work within this repository (images, etc.) belong to their original creators/owners, not me. If any issues arise concerning copyrighted material, please post an issue; I will see it and tend to it accordingly.
  
  <br></br>
 
