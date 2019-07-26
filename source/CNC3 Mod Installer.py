@@ -128,7 +128,7 @@ class Window(QWidget):
             orig_skudef_path_files = ['CNC3.exe', 'CNC3.par', 'CNC3_english_1.9.SkuDef',
                                       'LauncherSupport.dat', 'patchw32.dll', 'VistaShellSupport.dll']
             orig_config_and_big_path_files = ["config.txt", "patch9.big"]
-            orig_config_data = ["add-big patch9.big\n", "add-config ..\1.8\config.txt"]
+            orig_config_data = ["add-big patch9.big\n", "add-config ..\\1.8\\config.txt"]
         elif self.selectedGame == "Kanes Wrath":
             coreFolder = "1.2"
             modpath = kane_mods_path
@@ -136,7 +136,7 @@ class Window(QWidget):
                                       "CnC3-KW.jpg", "LauncherSupport.dat", "patchw32.dll",
                                       "VistaShellSupport.dll"]
             orig_config_and_big_path_files = ["config.txt", "patch2.big"]
-            orig_config_data = ["add-big patch2.big\n", "add-config ..\1.1\config.txt"]
+            orig_config_data = ["add-big patch2.big\n", "add-config ..\\1.1\\config.txt"]
             
         button_name = self.sender().text()
         skudef_path = os.path.join(launcher_path, "Command Conquer 3 {}".format(self.selectedGame))
