@@ -1,11 +1,13 @@
 # Command and Conquer 3 Mod Installer/Launcher
  A simplistic mod installer/launcher for use with Command and Conquer 3 in the Command and Conquer Ultimate Edition.
  
- This mod installer is mainly intended for those with the Origin version of the Command and Conquer Ultimate Edition game as its CNC3 executables have command line options disabled, making the option for running a direct mod launcher nearly impossible. This launcher can work with non-Origin versions of the Ultimate Collection.
+ This mod installer is mainly intended for those with the Origin version of the Command and Conquer Ultimate Edition game as its CNC3 executables have command line options disabled, making the option for running a direct mod launcher nearly impossible. This launcher may also work with non-Origin versions of the Ultimate Collection (don't know, don't own those versions; will try to enable functionality though).
  
- Written in Python and compiled into an executable with PyInstaller, this launcher simply copies the files in whichever mod you select from its mod list and places the copied data into its respectful directories within the core game folder(s).
+ Written in Python and compiled into an executable with PyInstaller, this launcher simply copies the files of whichever mod you choose and places the copied data into its respectful directories within the core game folder(s).
  
- I may or may not include other games from the Ultimate Edition since I personally don't use them, and I currently have no knowledge of how to manually install mods to them.
+ **Note:** This launcher only works with mods that solely use .big and .skudef files. If your mod only has .ini files or whatever, this launcher does not support that type of installation (but I will happily add such functionality if need be).
+ 
+ I may or may not include other games from the Ultimate Edition (Generals, Zero Hour, Red Alert 3, etc.) since I personally don't use them, and I currently have no knowledge of how to manually install mods to them.
  
  ***DISCLAIMER:*** Any copyrighted work within this repository (images, etc.) belong to their original creators/owners, not me. If any issues arise concerning copyrighted material, please post an issue; I will see it and tend to it accordingly.
  
