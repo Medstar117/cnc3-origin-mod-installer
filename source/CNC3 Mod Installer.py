@@ -5,7 +5,7 @@ from subprocess import call
 from ctypes import windll
 from string import ascii_uppercase as uppercase
 from PyQt5 import QtCore
-from PyQt5.QtGui import QPixmap
+from PyQt5.QtGui import QPixmap, QIcon
 from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout, QListWidget, QLabel,
                              QGroupBox, QHBoxLayout, QPushButton, QVBoxLayout, QRadioButton)
 
@@ -16,8 +16,9 @@ class Window(QWidget):
         layout = QGridLayout()
         self.setLayout(layout)
 
-        self.setWindowTitle("Medstar117's CNC3 Mod Launcher")
         self.setFixedSize(500, 350)
+        self.setWindowIcon(QIcon(resource_path("assets\\icons\\CnC3 - Gold.ico")))
+        self.setWindowTitle("Medstar117's CNC3 Mod Launcher")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.MSWindowsFixedSizeDialogHint)
         
         self.selectedGame = "Tiberium Wars"
