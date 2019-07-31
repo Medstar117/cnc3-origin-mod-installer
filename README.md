@@ -1,7 +1,7 @@
 # Command and Conquer 3 Mod Installer/Launcher
 
 <p align="center">
- <strong>>>>>>>>>>>RELEASE v1.0 NOW AVAILABLE<<<<<<<<<<</strong>
+ <strong>>>>>>>>>>>RELEASE v1.1 NOW AVAILABLE<<<<<<<<<<</strong>
 </p>
 
  A simplistic mod installer/launcher for use with Command and Conquer 3 in the Command and Conquer Ultimate Edition.
