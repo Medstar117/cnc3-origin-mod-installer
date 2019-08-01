@@ -1,7 +1,11 @@
 # Command and Conquer 3 Mod Installer/Launcher
 
 <p align="center">
- <strong>>>>>>>>>>>RELEASE v1.1 NOW AVAILABLE<<<<<<<<<<</strong>
+ <a href="https://github.com/Medstar117/cnc3-origin-mod-installer/releases">
+  <span>
+   <strong>>>>>>>>>>>RELEASE v1.1 NOW AVAILABLE<<<<<<<<<<</strong>
+  </span>
+ </a>
 </p>
 
  A simplistic mod installer/launcher for use with Command and Conquer 3 in the Command and Conquer Ultimate Edition.
