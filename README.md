@@ -1,9 +1,9 @@
 # Command and Conquer 3 Mod Installer/Launcher
 
 <p align="center">
- <a href="https://github.com/Medstar117/cnc3-origin-mod-installer/releases/download/v1.1/CNC3_Mod_Installer.exe">
+ <a href="https://github.com/Medstar117/cnc3-origin-mod-installer/releases/download/v1.2/CNC3_Mod_Installer.exe">
   <span>
-   <strong>>>>>>>>>>>DOWNLOAD RELEASE v1.1<<<<<<<<<<</strong>
+   <strong>>>>>>>>>>>DOWNLOAD RELEASE v1.2<<<<<<<<<<</strong>
   </span>
  </a>
 </p>
