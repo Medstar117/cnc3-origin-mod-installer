@@ -1,0 +1,26 @@
+{
+  "Tiberium Wars": {
+    "skudef_name" : "CNC3_english_1.9.SkuDef",
+    "data" : ["set-exe RetailExe\\1.9\\cnc3game.dat\n",
+              "add-config Lang-english\\1.9\\config.txt\n",
+              "add-config EnglishAudio\\1.7\\config.txt\n",
+              "add-config Movies\\1.0\\config.txt\n",
+              "add-config Core\\1.9\\config.txt\n",
+              "add-config SP\\1.9\\config.txt\n",
+              "add-config MP\\1.9\\config.txt\n",
+              "add-config RetailExe\\1.9\\config.txt\n",
+              "add-search-path big:\n\n"]
+            },
+
+  "Kanes Wrath" : {
+    "skudef_name" : "CNC3EP1_english_1.2.SkuDef",
+    "data" : ["set-exe RetailExe\\1.2\\cnc3ep1.dat\n",
+              "add-config Lang-english\\1.2\\config.txt\n",
+              "add-config EnglishAudio\\1.2\\config.txt\n",
+              "add-config Core\\1.2\\config.txt\n",
+              "add-config Meta\\1.2\\config.txt\n",
+              "add-config RetailExe\\1.2\\config.txt\n",
+              "add-config Movies\\1.0\\config.txt\n",
+              "add-search-path big:\n\n"]
+    }
+}

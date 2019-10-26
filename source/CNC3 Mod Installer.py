@@ -1,30 +1,31 @@
-import os
-import sys
+import os, sys
 from json import load, dump
 from subprocess import call
 from ctypes import windll
 from string import ascii_uppercase as uppercase
 from PyQt5 import QtCore
 from PyQt5.QtGui import QPixmap, QIcon
-from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout, QListWidget, QLabel,
-                             QGroupBox, QHBoxLayout, QPushButton, QVBoxLayout, QRadioButton)
+from PyQt5.QtWidgets import (QApplication, QWidget, QGridLayout, QListWidget,
+                            QLabel, QGroupBox, QHBoxLayout, QPushButton,
+                            QVBoxLayout, QRadioButton)
 
+#GUI Window
 class Window(QWidget):
     def __init__(self, parent=None):
         super(Window, self).__init__(parent)
 
-        #Set layout
+        #Set Layout
         layout = QGridLayout()
         self.setLayout(layout)
 
-        #Configure widget with settings and graphics
+        #Configure widget graphics and static dimensions
         self.setFixedSize(500, 350)
         self.setWindowIcon(QIcon(resource_path("assets\\icons\\CnC3 - Gold.ico")))
         self.setWindowTitle("Medstar117's CNC3 Mod Launcher")
         self.setWindowFlags(self.windowFlags() | QtCore.Qt.MSWindowsFixedSizeDialogHint)
 
         #Initialize UI data
-        self.selectedGame = "Tiberium Wars"
+        self.selectedGame = None
         self.selectedMod = None
         self.listwidget = QListWidget()
         self.logo = QLabel()
@@ -33,47 +34,57 @@ class Window(QWidget):
 
         #Set and display UI data to widget
         self.logo.setPixmap(QPixmap(resource_path("assets\\images\\banner.PNG")))
-        layout.addWidget(self.logo, 0, 0, 1, 2)
-        layout.addWidget(self.createGroup("Games"), 1, 0)
-        layout.addWidget(self.createGroup("Mods"), 1, 1)
-        layout.addWidget(self.buttonGroup, 2, 0, 1, 2)
+        layout.addWidget(self.logo, 0, 0, 1, 2) #Logo at top of window
+        layout.addWidget(self.createGroup("Games"), 1, 0) #Widget holding game radio buttons
+        layout.addWidget(self.createGroup("Mods"), 1, 1) #Widget holding mod list
+        layout.addWidget(self.buttonGroup, 2, 0, 1, 2) #Widget holding buttons at bottom of window
 
+
+    """---------------------------GUI Functions---------------------------"""
     def setListItems(self, items):
-        """Puts all available mods into the listwidget for selection"""
+        """Displays all available mods into the listwidget for selection."""
         self.listwidget.clear()
         self.selectedMod = None
         self.modbutton.setEnabled(False)
 
+        #Inserts items into list
         for i in range(len(items)):
             self.listwidget.insertItem(i, items[i])
 
     def createGroup(self, name):
-        """Create a QGroupBox with necessary buttons for needed purpose"""
+        """Create a QGroupBox with necessary buttons for each game."""
         groupBox = QGroupBox()
-        if name != "Buttons":
-            box = QVBoxLayout()
-        else:
-            box = QHBoxLayout()
+        if name != "Buttons": box = QVBoxLayout()
+        else: box = QHBoxLayout()
 
         if name == "Games":
+            #Creates container for all game radio buttons
             groupBox.setTitle(name)
-            titles = ["Tiberium Wars", "Kanes Wrath"]
-            buttons = [QRadioButton(title) for title in titles]
+
+            #Only displays a radio button if game is installed
+            installed_titles = [game_data[supported_games[i]]["Name"]
+                                for i in range(supported_games_count)
+                                if game_data[supported_games[i]]["Launcher Path"] != False]
+
+            buttons = [QRadioButton(title) for title in installed_titles]
             buttons[0].setChecked(True)
             for button in buttons:
-                button.title = titles[buttons.index(button)]
+                button.title = installed_titles[buttons.index(button)]
                 button.toggled.connect(self.radioClicked)
                 box.addWidget(button)
             box.addStretch(1)
+            self.selectedGame = buttons[0].title
 
         elif name == "Mods":
-            groupBox.setTitle(name + " - Located at {}".format(mods_path))
-            self.setListItems(tiberium_mods)
+            #Creates container for mod list
+            groupBox.setTitle(name + " - Located at {}".format(cnc_mods_path))
+            self.setListItems(game_data[self.selectedGame]["Mods"])
             self.listwidget.clicked.connect(self.listClicked)
             box.addWidget(self.listwidget)
             box.addStretch(1)
 
         elif name == "Buttons":
+            #Creates container for GUI buttons
             labels = ["Play Mod", "Play Vanilla"]
             buttons = [QPushButton(label) for label in labels]
             for button in buttons:
@@ -82,102 +93,93 @@ class Window(QWidget):
             buttons[0].setEnabled(False)
 
         groupBox.setLayout(box)
-
         return groupBox
 
     def listClicked(self, qmodelindex):
-        """Sets the selected mod, and ensures the mod button is enabled"""
+        """Sets the selected mod and ensures the mod button is enabled."""
         self.selectedMod = self.listwidget.currentItem().text()
         if self.modbutton.isEnabled != True:
             self.modbutton.setEnabled(True)
 
     def radioClicked(self):
-        """Set available mods to screen for desired game"""
+        """Set available mods to screen for selected game."""
         radioButton = self.sender()
+        game = radioButton.title
+
         if radioButton.isChecked():
-            if radioButton.title == "Tiberium Wars":
-                self.setListItems(tiberium_mods)
-                self.selectedGame = "Tiberium Wars"
-            elif radioButton.title == "Kanes Wrath":
-                self.setListItems(kane_mods)
-                self.selectedGame = "Kanes Wrath"
+            self.setListItems(game_data[game]["Mods"])
+            self.selectedGame = game
 
     def install_playGame(self):
-        """Checks which button is selected by user and either:
-        1) Installs the selected game and launches 'CNC3Launcher.exe' or
-        2) Restores the retail .SkuDef file and launches 'CNC3Launcher.exe'"""
+        """Check selected mod and either install the mod or restore the retail
+        .SkuDef file before launching the appropriate executable."""
+
         def _restoreSkuDef():
-            """Restores the retail .SkuDef file"""
-            with open(os.path.join(skudef_path, skudef_file), "w") as f:
-                f.writelines(orig_skudef_lang_data)
+            """Restores the retail .SkuDef file."""
+            with open(skudef_file, "w") as skudef:
+                skudef.writelines(orig_skudef_lang_data)
 
         def _findSkuDefs(walks):
-            """Finds all .SkuDef files for the selected mod"""
+            """Finds all .SkuDef files for the selected mod."""
             for walk in walks:
                 for file in walk[2]:
                     if file.lower().endswith("skudef"):
                         yield os.path.join(os.path.abspath(walk[0]), file)
 
-        def _install():
-            """Installs the selected mod"""
+        def _install_mod():
+            """Installs the selected mod."""
             mod = os.path.join(modpath, self.selectedMod)
             walks = [item for item in os.walk(mod)]
-            skudef_files = [file for file in _findSkuDefs(walks)]
+            mod_skudefs = [file for file in _findSkuDefs(walks)]
 
             _restoreSkuDef()
 
-            with open(os.path.join(skudef_path, skudef_file), "w") as f:
-                for file in skudef_files:
-                    f.write("add-config {}\n".format(file))
-                f.writelines(orig_skudef_lang_data)
+            with open(skudef_file, "w") as skudef:
+                for file in mod_skudefs:
+                    skudef.write("add-config {}\n".format(file))
+                skudef.writelines(orig_skudef_lang_data)
 
         def _startGame():
-            """Runs 'CNC3Launcher.exe'"""
+            """Runs the appropriate game executable."""
             if self.selectedGame == "Tiberium Wars" or "Kanes Wrath":
-                os.chdir(launcher_path)
-                call("CNC3Launcher.exe")
+                if game_data["Origin"]["Launcher Path"] != False:
+                    os.chdir(game_data["Origin"]["Launcher Path"])
+                    call(game_data["Origin"]["EXE Name"])
+                else:
+                    os.chdir(game_data[self.selectedGame]["Launcher Path"])
+                    call(game_data[self.selectedGame]["EXE Name"])
 
-        #TODO: Write this data to an existing "path.info" file?
-        #TODO: Expect language files other than "CNC3_english_1.9.SkuDef" (e.g. "CNC3_french_1.9.SkuDef", etc.)
-        if self.selectedGame == "Tiberium Wars":
-            modpath = tiberium_mods_path
-            skudef_file = "CNC3_english_1.9.SkuDef"
-            orig_skudef_lang_data = ["set-exe RetailExe\\1.9\\cnc3game.dat\n",
-                                    "add-config Lang-english\\1.9\\config.txt\n",
-                                    "add-config EnglishAudio\\1.7\\config.txt\n",
-                                    "add-config Movies\\1.0\\config.txt\n",
-                                    "add-config Core\\1.9\\config.txt\n",
-                                    "add-config SP\\1.9\\config.txt\n",
-                                    "add-config MP\\1.9\\config.txt\n",
-                                    "add-config RetailExe\\1.9\\config.txt\n",
-                                    "add-search-path big:\n\n"]
 
-        elif self.selectedGame == "Kanes Wrath":
-            modpath = kane_mods_path
-            skudef_file = "CNC3EP1_english_1.2.SkuDef"
-            orig_skudef_lang_data = ["set-exe RetailExe\\1.2\\cnc3ep1.dat\n",
-                                    "add-config Lang-english\\1.2\\config.txt\n",
-                                    "add-config EnglishAudio\\1.2\\config.txt\n",
-                                    "add-config Core\\1.2\\config.txt\n",
-                                    "add-config Meta\\1.2\\config.txt\n",
-                                    "add-config RetailExe\\1.2\\config.txt\n",
-                                    "add-config Movies\\1.0\\config.txt\n",
-                                    "add-search-path big:\n\n"]
-
+        #TODO: Expect language files other than "CNC3_english_1.9.SkuDef"
+        #(e.g. "CNC3_french_1.9.SkuDef", etc.)
         button_name = self.sender().text()
-        skudef_path = os.path.join(launcher_path, "Command Conquer 3 {}".format(self.selectedGame))
+        modpath = game_data[self.selectedGame]["Mod Path"]
+        orig_skudef_lang_data = game_data[self.selectedGame]["Skudef Data"]
+        skudef_file = os.path.join(game_data[self.selectedGame]["Launcher Path"],
+                                   game_data[self.selectedGame]["Skudef Name"])
 
         if button_name == "Play Mod":
-            _install()
+            _install_mod()
             _startGame()
         elif button_name == "Play Vanilla":
             _restoreSkuDef()
             _startGame()
 
-def find_launcher():
-    """Find retail CNC3 game launcher"""
+
+"""---------------------------Non-GUI Functions---------------------------"""
+def resource_path(relative_path):
+    """Get absolute path to needed resource."""
+    try: base_path = sys._MEIPASS
+    except AttributeError: base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+#def find_launcher(launcher_name):
+def find_launchers():
+    """Automatically finds specified executable name."""
+
     def _find_drives():
-        """Finds all connected drives"""
+        """Automatically finds all connected drives (Windows)."""
         drives = []
         bitmask = windll.kernel32.GetLogicalDrives()
         for letter in uppercase:
@@ -186,49 +188,94 @@ def find_launcher():
             bitmask >>= 1
         return drives
 
+    #Search for executable among connected drives, return the directory it is in
+    exe_paths = {}
+    names = exe_names.copy()
     for drive in _find_drives():
-        for r,d,f in os.walk(drive + ":/"):
+        for r, d, f in os.walk(drive + ":/"):
             for file in f:
-                if file == "CNC3Launcher.exe":
-                    return os.path.abspath(r)
+                if file in names:
+                    exe_paths.update({file : os.path.abspath(r)})
+                    names.remove(file)
+                    if len(names) == 0:
+                        break
 
-def resource_path(relative_path):
-    """Get absolute path to needed resource"""
-    try:
-        base_path = sys._MEIPASS
-    except Exception:
-        base_path = os.path.abspath(".")
+    if len(names) != 0:
+        for name in names:
+            exe_paths.update({name : False})
 
-    return os.path.join(base_path, relative_path)
+    return exe_paths #No executable is found
 
+def fetch_mods(path):
+    return [d for r, d, f in os.walk(path)][0]
+
+"""------------------------Main Loop Initialization------------------------"""
 if __name__ == "__main__":
-    #Set needed paths to variables.
-    mods_path = os.path.join(os.path.expanduser("~"), "Documents", "CNC3 Mods")
-    tiberium_mods_path = os.path.join(mods_path, "Tiberium Wars")
-    kane_mods_path = os.path.join(mods_path, "Kanes Wrath")
+    #General data
+    launcher_names = ["origin_launcher_path", "tiberium_launcher_path", "kane_launcher_path"]
+    exe_names = ["CNC3Launcher.exe", "CNC3.exe", "CNC3EP1.exe"]
+    supported_games = ["Tiberium Wars", "Kanes Wrath"]
+    supported_games_count = len(supported_games)
 
-    #Check if expeted paths exist; if not, create them.
-    main_paths = [mods_path, tiberium_mods_path, kane_mods_path]
-    for path in main_paths:
+    #Set mod paths
+    cnc_mods_path = os.path.join(os.path.expanduser("~"), "Documents", "CNC Mods")
+    tiberium_mods_path = os.path.join(cnc_mods_path, "Tiberium Wars")
+    kane_mods_path = os.path.join(cnc_mods_path, "Kanes Wrath")
+    mod_paths = [tiberium_mods_path, kane_mods_path]
+
+    #Check if expected paths exist; if not, create them.
+    for path in mod_paths:
         if os.path.exists(path) == False:
             os.mkdir(path)
 
-    #Check if the launcher had ran before and had stored where "CNC3Launcher.exe" is located;
-    #If the file doesn't exist, create it and store the data.
-    #TODO: Check if data is present; if not, act as if the file doesn't exist or something
-    data_path = os.path.join(os.getcwd(), "path.info")
-    if os.path.exists(data_path) == True:
-        with open(data_path, "r") as f:
-            data = load(f)
-            launcher_path = data["launcher_path"]
+    #Check if the launcher has ran before; there will be a path.info file in
+    #the launcher's directory if that is true. If the launcher has not been ran
+    #before, find all game executable locations.
+    path_info = os.path.join(os.getcwd(), "path_locations.info")
+    if os.path.exists(path_info) == True:
+        with open(path_info, "r") as data:
+            paths = load(data)
+        launcher_paths = [paths[name] for name in launcher_names]#Origin, Tiberium, Kane
     else:
-        data = {"launcher_path": find_launcher()}
-        with open(data_path, "w") as f:
-            dump(data, f, indent=2)
+        launcher_dict = find_launchers()
+        launcher_paths = [launcher_dict[exe] for exe in exe_names]
+        json_data = dict(zip(launcher_names, launcher_paths))
+        
+        with open(path_info, "w") as path_file:
+            dump(json_data, path_file, indent = 2)
 
-    #Find all mods in the expected directories and store them into variables
-    tiberium_mods = [d for r,d,f in os.walk(tiberium_mods_path)][0]
-    kane_mods = [d for r,d,f in os.walk(kane_mods_path)][0]
+    #Load original skudef info
+    skudef_info = resource_path("assets\\skudef_info.json")
+    with open(skudef_info, "r") as info:
+        skudef_attrs = load(info)
+
+    #Find all mods in the expected directories and store their paths into lists
+    #and load the needed skudef path
+    available_mods = [fetch_mods(path) for path in mod_paths]#Tiberium, Kane
+
+    game_data = {"Origin": {
+                    "Launcher Path" : launcher_paths[0],
+                    "EXE Name" : exe_names[0]
+                    },
+                 "Tiberium Wars" : {
+                    "Name" : supported_games[0],
+                    "Mods": available_mods[0],
+                    "Mod Path" : mod_paths[0],
+                    "Launcher Path" : launcher_paths[1],
+                    "EXE Name" : exe_names[1],
+                    "Skudef Name" : skudef_attrs[supported_games[0]]["skudef_name"],
+                    "Skudef Data" : skudef_attrs[supported_games[0]]["data"]
+                    },
+                 "Kanes Wrath" : {
+                    "Name" : supported_games[1],
+                    "Mods": available_mods[1],
+                    "Mod Path" : mod_paths[1],
+                    "Launcher Path" : launcher_paths[2],
+                    "EXE Name" : exe_names[2],
+                    "Skudef Name" : skudef_attrs[supported_games[1]]["skudef_name"],
+                    "Skudef Data" : skudef_attrs[supported_games[1]]["data"]
+                    },
+                 }
 
     #Execute QApplication
     app = QApplication(sys.argv)
