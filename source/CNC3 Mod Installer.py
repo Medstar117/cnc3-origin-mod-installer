@@ -146,8 +146,13 @@ class Window(QWidget):
                     os.chdir(game_data["Origin"]["Launcher Path"])
                     call(game_data["Origin"]["EXE Name"])
                 else:
-                    os.chdir(game_data[self.selectedGame]["Launcher Path"])
-                    call(game_data[self.selectedGame]["EXE Name"])
+                    game_path = game_data[self.selectedGame]["Launcher Path"]
+                    game_exe = game_data[self.selectedGame]["EXE Name"]
+                    exes_in_path = [file for file in os.listdir(game_path) if file.endswith(".exe")]
+                    for exe in exes_in_path:
+                        if exe == game_exe.lower() or exe == game_exe:
+                            os.chdir(game_path)
+                            call(exe)
 
 
         #TODO: Expect language files other than "CNC3_english_1.9.SkuDef"
@@ -194,7 +199,11 @@ def find_launchers():
     for drive in _find_drives():
         for r, d, f in os.walk(drive + ":/"):
             for file in f:
-                if file in names:
+                uc_file = os.path.splitext(file)[0].upper() + ".exe"
+                if uc_file in names:
+                    exe_paths.update({uc_file : os.path.abspath(r)})
+                    names.remove(uc_file)
+                elif file in names:
                     exe_paths.update({file : os.path.abspath(r)})
                     names.remove(file)
                     if len(names) == 0:
