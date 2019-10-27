@@ -8,6 +8,8 @@
  </a>
 </p>
 
+ ***NOTICE: YOU MUST HAVE PATCH 1.09 FOR TIBERIUM WARS AND PATCH 1.02 FOR KANE'S WRATH!!!***
+
  A simplistic mod installer/launcher made for use with Command and Conquer 3 in the Command and Conquer Ultimate Collection.
  
  This mod installer is mainly intended for those who own Command and Conquer: The Ultimate Collection on Origin as its CNC executables have command line options disabled, making the option for running a direct mod launcher nearly impossible. This launcher also works with non-Origin versions of Command and Conquer 3 (funtionality enabled in v1.2).
