@@ -226,7 +226,7 @@ if __name__ == "__main__":
     #Check if expected paths exist; if not, create them.
     for path in mod_paths:
         if os.path.exists(path) == False:
-            os.mkdir(path)
+            os.makedirs(path)
 
     #Check if the launcher has ran before; there will be a path.info file in
     #the launcher's directory if that is true. If the launcher has not been ran
@@ -240,12 +240,12 @@ if __name__ == "__main__":
         launcher_dict = find_launchers()
         launcher_paths = [launcher_dict[exe] for exe in exe_names]
         json_data = dict(zip(launcher_names, launcher_paths))
-        
+
         with open(path_info, "w") as path_file:
             dump(json_data, path_file, indent = 2)
 
     #Load original skudef info
-    skudef_info = resource_path("assets\\skudef_info.json")
+    skudef_info = resource_path("assets\\data\\skudef_info.json")
     with open(skudef_info, "r") as info:
         skudef_attrs = load(info)
 
