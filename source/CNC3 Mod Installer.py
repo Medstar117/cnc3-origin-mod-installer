@@ -199,16 +199,12 @@ def find_launchers():
     for drive in _find_drives():
         for r, d, f in os.walk(drive + ":/"):
             for file in f:
-                uc_list = os.path.splitext(file)
-                if file in names:
-                    exe_paths.update({file : os.path.abspath(r)})
-                    names.remove(file)
-                elif uc_list[0].upper() in names and uc_list[1] == ".exe":
-                    uc_file = uc_list[0].upper() + ".exe"
-                    exe_paths.update({uc_file : os.path.abspath(r)})
-                    names.remove(uc_file)
-                if len(names) == 0:
-                    break
+                for name in names:
+                    if file == name or file == name.lower():
+                        exe_paths.update({name : os.path.abspath(r)})
+                        names.remove(name)
+                    if len(names) == 0:
+                        break
 
     if len(names) != 0:
         for name in names:
