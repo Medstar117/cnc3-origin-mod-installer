@@ -9,6 +9,12 @@
 </p>
 
  ***NOTICE: YOU MUST HAVE PATCH 1.09 FOR TIBERIUM WARS AND PATCH 1.02 FOR KANE'S WRATH!!!***
+ 
+ ***NOTICE 2:*** As of right now, whenever you press the "Play Mod" button, the mod will stay installed until you press the "Play Vanilla" button. Later on down the road, I may add a process monitoring hook into place so that the game is restored whenever the user exits the program. So, if you use this, then you had better get used to it!
+
+ # Description
+ 
+ ***------------------------------------------------READ ABOVE BEFORE PROCEEDING-----------------------------------------------***
 
  A simplistic mod installer/launcher made for use with Command and Conquer 3 in the Command and Conquer Ultimate Collection.
  
