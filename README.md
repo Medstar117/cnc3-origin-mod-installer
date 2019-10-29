@@ -14,7 +14,7 @@
 
  # Description
  
- ***------------------------------------------------READ ABOVE BEFORE PROCEEDING-----------------------------------------------***
+ ***-----------------------------------------------READ ABOVE BEFORE PROCEEDING-----------------------------------------------***
 
  A simplistic mod installer/launcher made for use with Command and Conquer 3 in the Command and Conquer Ultimate Collection.
  
