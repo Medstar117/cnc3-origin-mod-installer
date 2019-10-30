@@ -146,13 +146,12 @@ class Window(QWidget):
                     os.chdir(game_data["Origin"]["Launcher Path"])
                     call(game_data["Origin"]["EXE Name"])
                 else:
-                    game_path = game_data[self.selectedGame]["Launcher Path"]
+                    os.chdir(game_data[self.selectedGame]["Launcher Path"])
                     game_exe = game_data[self.selectedGame]["EXE Name"]
-                    exes_in_path = [file for file in os.listdir(game_path) if file.endswith(".exe")]
-                    for exe in exes_in_path:
-                        if exe == game_exe.lower() or exe == game_exe:
-                            os.chdir(game_path)
-                            call(exe)
+                    if os.path.exists(game_exe):
+                        call(game_exe)
+                    else:
+                        call(game_exe.lower())
 
 
         #TODO: Expect language files other than "CNC3_english_1.9.SkuDef"
@@ -260,29 +259,13 @@ if __name__ == "__main__":
     available_mods = [fetch_mods(path) for path in mod_paths]#Tiberium, Kane
 
     #Config Data
-    game_data = {"Origin": {
-                    "Launcher Path" : launcher_paths[0],
-                    "EXE Name" : exe_names[0]
-                    },
-                 "Tiberium Wars" : {
-                    "Name" : supported_games[0],
-                    "Mods": available_mods[0],
-                    "Mod Path" : mod_paths[0],
-                    "Launcher Path" : launcher_paths[1],
-                    "EXE Name" : exe_names[1],
-                    "Skudef Name" : skudef_attrs[supported_games[0]]["skudef_name"],
-                    "Skudef Data" : skudef_attrs[supported_games[0]]["data"]
-                    },
-                 "Kanes Wrath" : {
-                    "Name" : supported_games[1],
-                    "Mods": available_mods[1],
-                    "Mod Path" : mod_paths[1],
-                    "Launcher Path" : launcher_paths[2],
-                    "EXE Name" : exe_names[2],
-                    "Skudef Name" : skudef_attrs[supported_games[1]]["skudef_name"],
-                    "Skudef Data" : skudef_attrs[supported_games[1]]["data"]
-                    },
-                 }
+    game_info = resource_path("assets\\data\\game_data.json")
+    with open(game_info, "r") as info:
+        game_data = load(info)
+
+    for game_key in game_data.keys():
+        for item in game_data[game_key].keys():
+            game_data[game_key][item] = eval(game_data[game_key][item])
 
     #Execute QApplication
     app = QApplication(sys.argv)

@@ -1,0 +1,24 @@
+{
+  "Origin": {
+    "Launcher Path" : "launcher_paths[0]",
+    "EXE Name" : "exe_names[0]"
+  },
+  "Tiberium Wars" : {
+    "Name" : "supported_games[0]",
+    "Mods": "available_mods[0]",
+    "Mod Path" : "mod_paths[0]",
+    "Launcher Path" : "launcher_paths[1]",
+    "EXE Name" : "exe_names[1]",
+    "Skudef Name" : "skudef_attrs[supported_games[0]]['skudef_name']",
+    "Skudef Data" : "skudef_attrs[supported_games[0]]['data']"
+  },
+  "Kanes Wrath" : {
+    "Name" : "supported_games[1]",
+    "Mods": "available_mods[1]",
+    "Mod Path" : "mod_paths[1]",
+    "Launcher Path" : "launcher_paths[2]",
+    "EXE Name" : "exe_names[2]",
+    "Skudef Name" : "skudef_attrs[supported_games[1]]['skudef_name']",
+    "Skudef Data" : "skudef_attrs[supported_games[1]]['data']"
+  }
+}
