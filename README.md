@@ -3,7 +3,7 @@
 <p align="center">
  <a href="https://github.com/Medstar117/cnc3-origin-mod-installer/releases/download/v1.3/CNC3_Mod_Installer.exe">
   <span>
-   <strong>>>>>>>>>>>DOWNLOAD RELEASE v1.2<<<<<<<<<<</strong>
+   <strong>>>>>>>>>>>DOWNLOAD RELEASE v1.3<<<<<<<<<<</strong>
   </span>
  </a>
 </p>
