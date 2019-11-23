@@ -22,5 +22,31 @@
               "add-config RetailExe\\1.2\\config.txt\n",
               "add-config Movies\\1.0\\config.txt\n",
               "add-search-path big:\n\n"]
-    }
+            },
+  "Red Alert 3" : {
+    "skudef_name" : "RA3_english_1.12.SkuDef",
+    "data" : ["set-exe Data\\RA3_1.12.game\n",
+              "add-big Data\\Maps12.big\n",
+              "add-big Data\\Core12.big\n",
+              "add-config RA3_english_1.11.SkuDef"]
+            },
+  "Uprising" : {
+    "skudef_name" : "RA3EP1_English_1.0.SkuDef",
+    "data" : ["set-exe Data\\ra3ep1_1.0.game\n",
+              "set-search-path big:;.\n",
+              "add-big Data\\MapsCampaign.big\n",
+              "add-big Data\\MapsTutorial.big\n",
+              "add-big Data\\MapsMultiplayer.big\n",
+              "add-big Data\\English.big\n",
+              "add-big Data\\EnglishAudio.big\n",
+              "add-big Data\\EnglishMovieAudio.big\n",
+              "add-big Data\\Apt.big\n",
+              "add-big Data\\Terrain.big\n",
+              "add-big Data\\StaticStream.big\n",
+              "add-big Data\\GlobalStream.big\n",
+              "add-big Data\\Libraries.big\n",
+              "add-big Data\\Shaders.big\n",
+              "add-big Data\\Misc.big\n",
+              "add-big Data\\WBData.big\n"]
+            }
 }

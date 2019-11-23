@@ -110,6 +110,32 @@ class Window(QWidget):
             self.setListItems(game_data[game]["Mods"])
             self.selectedGame = game
 
+    def startGame(self):
+        """Runs the appropriate game executable."""
+
+        def _runStandard():
+            os.chdir(game_data[self.selectedGame]["Launcher Path"])
+            game_exe = game_data[self.selectedGame]["EXE Name"]
+            if os.path.exists(game_exe):
+                call(game_exe)
+            else:
+                call(game_exe.lower())
+
+        def _runOrigin(origin):
+            """Run game from Origin launcher."""
+            if game_data[origin]["Launcher Path"] != False:
+                os.chdir(game_data[origin]["Launcher Path"])
+                print(os.getcwd())
+                call(game_data[origin]["EXE Name"])
+            else:
+                _runStandard()
+
+        #Add Game Selection
+        if self.selectedGame == "Tiberium Wars" or self.selectedGame == "Kanes Wrath":
+            _runOrigin("Origin 3")
+        elif self.selectedGame == "Red Alert 3" or self.selectedGame == "Uprising":
+            _runOrigin("Origin RA3")
+
     def install_playGame(self):
         """Check selected mod and either install the mod or restore the retail
         .SkuDef file before launching the appropriate executable."""
@@ -139,21 +165,6 @@ class Window(QWidget):
                     skudef.write("add-config {}\n".format(file))
                 skudef.writelines(orig_skudef_lang_data)
 
-        def _startGame():
-            """Runs the appropriate game executable."""
-            if self.selectedGame == "Tiberium Wars" or "Kanes Wrath":
-                if game_data["Origin"]["Launcher Path"] != False:
-                    os.chdir(game_data["Origin"]["Launcher Path"])
-                    call(game_data["Origin"]["EXE Name"])
-                else:
-                    os.chdir(game_data[self.selectedGame]["Launcher Path"])
-                    game_exe = game_data[self.selectedGame]["EXE Name"]
-                    if os.path.exists(game_exe):
-                        call(game_exe)
-                    else:
-                        call(game_exe.lower())
-
-
         #TODO: Expect language files other than "CNC3_english_1.9.SkuDef"
         #(e.g. "CNC3_french_1.9.SkuDef", etc.)
         button_name = self.sender().text()
@@ -164,10 +175,10 @@ class Window(QWidget):
 
         if button_name == "Play Mod":
             _install_mod()
-            _startGame()
+            self.startGame()
         elif button_name == "Play Vanilla":
             _restoreSkuDef()
-            _startGame()
+            self.startGame()
 
 
 """---------------------------Non-GUI Functions---------------------------"""
@@ -217,16 +228,22 @@ def fetch_mods(path):
 """------------------------Main Loop Initialization------------------------"""
 if __name__ == "__main__":
     #General data
-    launcher_names = ["origin_launcher_path", "tiberium_launcher_path", "kane_launcher_path"]
-    exe_names = ["CNC3Launcher.exe", "CNC3.exe", "CNC3EP1.exe"]
-    supported_games = ["Tiberium Wars", "Kanes Wrath"]
+    #Add Game Launcher
+    launcher_names = ["origin_3_launcher_path", "tiberium_launcher_path", "kane_launcher_path",
+                      "origin_ra_launcher_path", "ra_launcher_path", "uprising_launcher_path"]
+    #Add Game EXE
+    exe_names = ["CNC3Launcher.exe", "CNC3.exe", "CNC3EP1.exe",
+                 "RA3Launcher.exe", "RA3.exe", "RA3EP1.exe"]
+    #Add Game Supported Game
+    supported_games = ["Tiberium Wars", "Kanes Wrath",
+                       "Red Alert 3", "Uprising"]
+                       #"Generals", "Zero Hour"]
+
     supported_games_count = len(supported_games)
 
     #Set mod paths
     cnc_mods_path = os.path.join(os.path.expanduser("~"), "Documents", "CNC Mods")
-    tiberium_mods_path = os.path.join(cnc_mods_path, "Tiberium Wars")
-    kane_mods_path = os.path.join(cnc_mods_path, "Kanes Wrath")
-    mod_paths = [tiberium_mods_path, kane_mods_path]
+    mod_paths = [os.path.join(cnc_mods_path, game) for game in supported_games]
 
     #Check if expected paths exist; if not, create them.
     for path in mod_paths:
@@ -240,7 +257,7 @@ if __name__ == "__main__":
     if os.path.exists(path_info) == True:
         with open(path_info, "r") as data:
             paths = load(data)
-        launcher_paths = [paths[name] for name in launcher_names]#Origin, Tiberium, Kane
+        launcher_paths = [paths[name] for name in launcher_names]#Origin3, Tiberium, Kane, OriginRA3, RA3, Uprising
     else:
         launcher_dict = find_launchers()
         launcher_paths = [launcher_dict[exe] for exe in exe_names]
